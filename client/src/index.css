@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+
+  body {
+    background-color: #F5F9FD;
+    color: #17324D;
+  }
+}
+
+/* Reusable Custom Utility Components using SmartHire Design Tokens */
+@layer components {
+  /* Primary Button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-medium text-white bg-blue-500 hover:bg-blue-600 active:bg-blue-700 transition-colors duration-150 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  /* Secondary Button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 active:bg-blue-300 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  /* Outline Button */
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-medium text-content-primary bg-white border border-brandBorder hover:bg-blue-100/50 hover:border-blue-400 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  /* Form Input Styling */
+  .form-input {
+    @apply w-full px-3.5 py-2.5 bg-white border border-brandBorder rounded-lg text-content-primary placeholder-content-secondary/60 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all;
+  }
+
+  /* White Card Container */
+  .card-container {
+    @apply bg-white rounded-xl border border-brandBorder shadow-subtle p-6;
+  }
+
+  /* Informational Pill / Badge */
+  .badge-roadmap {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200;
+  }
+}
