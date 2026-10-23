@@ -1,9 +1,7 @@
 /**
  * SmartHire Registration Page
- * Allows new users to sign up as either a 'job_seeker' or 'employer'.
- *
- * Security Notice:
- * 'admin' is explicitly excluded from public registration in adherence to Section 7 requirements.
+ * User-centered registration form with intuitive role selection, inline error handling,
+ * and compact layout optimized for desktop and mobile viewports.
  */
 
 import React, { useState } from 'react';
@@ -55,6 +53,9 @@ const RegisterPage = () => {
 
   const handleRoleSelect = (selectedRole) => {
     setFormData((prev) => ({ ...prev, role: selectedRole }));
+    if (clientErrors.role) {
+      setClientErrors((prev) => ({ ...prev, role: '' }));
+    }
   };
 
   const validate = () => {
@@ -85,7 +86,7 @@ const RegisterPage = () => {
     }
 
     if (!['job_seeker', 'employer'].includes(formData.role)) {
-      errors.role = 'Please select a valid account role';
+      errors.role = 'Please select your account type';
     }
 
     setClientErrors(errors);
@@ -102,11 +103,11 @@ const RegisterPage = () => {
     setIsSubmitting(true);
     try {
       const newUser = await register(formData);
-      setSuccessMessage('Account created successfully! Preparing your dashboard...');
+      setSuccessMessage('Account created successfully! Preparing your workspace...');
 
       setTimeout(() => {
         navigate(getDashboardPath(newUser.role), { replace: true });
-      }, 700);
+      }, 600);
     } catch (err) {
       setServerError(
         err.message || 'Registration could not be completed. Please try again.'
@@ -117,34 +118,34 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-8rem)] flex flex-col justify-center py-8 sm:px-6 lg:px-8">
       
       {/* Header Branding */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-lg text-center space-y-2">
-        <Link to="/" className="inline-flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-1.5">
+        <Link to="/" className="inline-flex items-center gap-2 group">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
             <Briefcase className="w-5 h-5 text-white" />
           </div>
           <span className="text-2xl font-bold text-blue-700">
             Smart<span className="text-blue-500">Hire</span>
           </span>
         </Link>
-        <h2 className="text-2xl font-bold text-blue-700">Create Your Account</h2>
+        <h1 className="text-2xl font-bold text-blue-700">Create your SmartHire account</h1>
         <p className="text-sm text-content-secondary">
-          Join SmartHire to discover opportunities or connect with high-caliber talent.
+          Join as a candidate to find opportunities or as an employer to hire talent.
         </p>
       </div>
 
       {/* Main Form Card */}
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
-        <div className="card-container">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-lg">
+        <div className="card-container shadow-card p-6 sm:p-8">
           
           {/* Server Error Alert */}
           {serverError && (
-            <div className="mb-5 p-3.5 rounded-lg bg-status-error-bg border border-status-error-border flex items-start gap-3 text-status-error text-sm">
-              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div className="mb-4 p-3 rounded-lg bg-status-error-bg border border-status-error-border flex items-start gap-2.5 text-status-error text-sm">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="font-semibold">Registration Failed</p>
+                <p className="font-semibold text-xs uppercase tracking-wide">Notice</p>
                 <p className="text-xs mt-0.5">{serverError}</p>
               </div>
             </div>
@@ -152,18 +153,18 @@ const RegisterPage = () => {
 
           {/* Success Alert */}
           {successMessage && (
-            <div className="mb-5 p-3.5 rounded-lg bg-status-success-bg border border-status-success-border flex items-start gap-3 text-status-success text-sm">
-              <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
-              <p className="font-semibold">{successMessage}</p>
+            <div className="mb-4 p-3 rounded-lg bg-status-success-bg border border-status-success-border flex items-start gap-2.5 text-status-success text-sm">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+              <p className="font-semibold text-xs">{successMessage}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             
-            {/* Role Selection Selector (Job Seeker vs Employer) */}
+            {/* Account Type Selector (Job Seeker vs Employer) */}
             <div>
               <label className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-2">
-                I want to join as a:
+                I want to join as: <span className="text-status-error">*</span>
               </label>
               <div className="grid grid-cols-2 gap-3">
                 
@@ -171,44 +172,42 @@ const RegisterPage = () => {
                 <button
                   type="button"
                   onClick={() => handleRoleSelect('job_seeker')}
-                  className={`p-3.5 rounded-xl border text-left flex flex-col gap-1 transition-all ${
+                  className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all ${
                     formData.role === 'job_seeker'
-                      ? 'bg-blue-100/70 border-blue-500 ring-2 ring-blue-500/20 text-blue-700'
+                      ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/20 text-blue-700 shadow-sm'
                       : 'bg-white border-brandBorder text-content-secondary hover:border-blue-300'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <UserCheck className="w-5 h-5 text-blue-500" />
-                    {formData.role === 'job_seeker' && (
-                      <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                    )}
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                    formData.role === 'job_seeker' ? 'bg-blue-500 text-white' : 'bg-blue-100 text-blue-600'
+                  }`}>
+                    <UserCheck className="w-4 h-4" />
                   </div>
-                  <span className="font-bold text-sm text-content-primary">Job Seeker</span>
-                  <span className="text-[11px] text-content-secondary">
-                    Looking for career roles & AI matching
-                  </span>
+                  <div className="min-w-0">
+                    <p className="font-bold text-sm text-content-primary leading-tight">Job Seeker</p>
+                    <p className="text-[11px] text-content-secondary truncate">Looking for jobs</p>
+                  </div>
                 </button>
 
                 {/* Option 2: Employer */}
                 <button
                   type="button"
                   onClick={() => handleRoleSelect('employer')}
-                  className={`p-3.5 rounded-xl border text-left flex flex-col gap-1 transition-all ${
+                  className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all ${
                     formData.role === 'employer'
-                      ? 'bg-blue-100/70 border-blue-500 ring-2 ring-blue-500/20 text-blue-700'
+                      ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/20 text-blue-700 shadow-sm'
                       : 'bg-white border-brandBorder text-content-secondary hover:border-blue-300'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <Building2 className="w-5 h-5 text-blue-600" />
-                    {formData.role === 'employer' && (
-                      <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-                    )}
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                    formData.role === 'employer' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'
+                  }`}>
+                    <Building2 className="w-4 h-4" />
                   </div>
-                  <span className="font-bold text-sm text-content-primary">Employer</span>
-                  <span className="text-[11px] text-content-secondary">
-                    Hiring talent & reviewing candidate pools
-                  </span>
+                  <div className="min-w-0">
+                    <p className="font-bold text-sm text-content-primary leading-tight">Employer</p>
+                    <p className="text-[11px] text-content-secondary truncate">Hiring talent</p>
+                  </div>
                 </button>
 
               </div>
@@ -221,9 +220,9 @@ const RegisterPage = () => {
             <div>
               <label
                 htmlFor="name"
-                className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1.5"
+                className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1"
               >
-                Full Name
+                Full Name <span className="text-status-error">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-content-secondary">
@@ -252,9 +251,9 @@ const RegisterPage = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1.5"
+                className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1"
               >
-                Email Address
+                Email Address <span className="text-status-error">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-content-secondary">
@@ -265,7 +264,7 @@ const RegisterPage = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  placeholder="alex@example.com"
+                  placeholder="alex@company.com"
                   value={formData.email}
                   onChange={handleChange}
                   disabled={isSubmitting}
@@ -280,15 +279,15 @@ const RegisterPage = () => {
             </div>
 
             {/* Password and Confirm Password Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               
               {/* Password */}
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1.5"
+                  className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1"
                 >
-                  Password
+                  Password <span className="text-status-error">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-content-secondary">
@@ -299,7 +298,7 @@ const RegisterPage = () => {
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="new-password"
-                    placeholder="Min 6 chars"
+                    placeholder="Min. 6 chars"
                     value={formData.password}
                     onChange={handleChange}
                     disabled={isSubmitting}
@@ -310,7 +309,7 @@ const RegisterPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-content-secondary hover:text-content-primary"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-content-secondary hover:text-content-primary"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -327,9 +326,9 @@ const RegisterPage = () => {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1.5"
+                  className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1"
                 >
-                  Confirm Password
+                  Confirm Password <span className="text-status-error">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-content-secondary">
@@ -359,22 +358,19 @@ const RegisterPage = () => {
             </div>
 
             {/* Submit Button */}
-            <div>
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn-primary w-full !py-3 flex items-center justify-center gap-2"
+                className="btn-primary w-full !py-3 flex items-center justify-center gap-2 text-base font-semibold"
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Creating account...</span>
+                    <span>Creating your account...</span>
                   </>
                 ) : (
-                  <>
-                    <span>Complete Registration</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
+                  <span>Create Account</span>
                 )}
               </button>
             </div>
@@ -382,13 +378,13 @@ const RegisterPage = () => {
           </form>
 
           {/* Switch to Sign In */}
-          <div className="mt-6 text-center text-xs text-content-secondary">
-            Already registered on SmartHire?{' '}
+          <div className="mt-5 pt-4 border-t border-brandBorder text-center text-xs text-content-secondary">
+            Already have an account?{' '}
             <Link
               to="/login"
               className="font-semibold text-blue-600 hover:text-blue-700 underline underline-offset-2"
             >
-              Sign In here
+              Sign In
             </Link>
           </div>
 

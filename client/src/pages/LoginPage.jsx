@@ -1,6 +1,6 @@
 /**
  * SmartHire Login Page
- * Features client-side validation, loading indicators, server error messaging,
+ * User-centered login screen with clear error feedback, accessible field labels,
  * password visibility toggle, and automatic role-based redirection upon success.
  */
 
@@ -16,8 +16,6 @@ import {
   AlertCircle,
   Loader2,
   CheckCircle2,
-  Info,
-  ShieldCheck,
 } from 'lucide-react';
 
 const LoginPage = () => {
@@ -36,28 +34,6 @@ const LoginPage = () => {
   const [serverError, setServerError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Quick fill helper for review/testing
-  const fillDemoCredentials = (role) => {
-    if (role === 'admin') {
-      setFormData({
-        email: 'admin@smarthire.local',
-        password: 'Admin@12345',
-      });
-    } else if (role === 'employer') {
-      setFormData({
-        email: 'employer@techcorp.com',
-        password: 'Password@123',
-      });
-    } else {
-      setFormData({
-        email: 'seeker@example.com',
-        password: 'Password@123',
-      });
-    }
-    setClientErrors({});
-    setServerError('');
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,18 +73,17 @@ const LoginPage = () => {
     setIsSubmitting(true);
     try {
       const loggedInUser = await login(formData);
-      setSuccessMessage('Login successful! Redirecting to your dashboard...');
+      setSuccessMessage('Signed in successfully! Taking you to your dashboard...');
 
       // Redirect after brief visual feedback
       setTimeout(() => {
-        // Redirect to originating URL if available, or role dashboard
         const redirectPath =
           location.state?.from?.pathname || getDashboardPath(loggedInUser.role);
         navigate(redirectPath, { replace: true });
-      }, 700);
+      }, 600);
     } catch (err) {
       setServerError(
-        err.message || 'Authentication failed. Please verify your credentials.'
+        err.message || 'Unable to sign in. Please check your email and password.'
       );
     } finally {
       setIsSubmitting(false);
@@ -116,34 +91,34 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-8rem)] flex flex-col justify-center py-10 sm:px-6 lg:px-8">
       
       {/* Header Branding */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
-        <Link to="/" className="inline-flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm">
+        <Link to="/" className="inline-flex items-center gap-2 group">
+          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
             <Briefcase className="w-5 h-5 text-white" />
           </div>
           <span className="text-2xl font-bold text-blue-700">
             Smart<span className="text-blue-500">Hire</span>
           </span>
         </Link>
-        <h2 className="text-2xl font-bold text-blue-700">Welcome Back</h2>
+        <h1 className="text-2xl font-bold text-blue-700">Welcome Back</h1>
         <p className="text-sm text-content-secondary">
-          Enter your credentials to access your personalized workspace.
+          Enter your email and password to access your account.
         </p>
       </div>
 
       {/* Main Login Card */}
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="card-container">
+      <div className="mt-7 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="card-container shadow-card p-6 sm:p-8">
           
           {/* Server Error Alert */}
           {serverError && (
             <div className="mb-5 p-3.5 rounded-lg bg-status-error-bg border border-status-error-border flex items-start gap-3 text-status-error text-sm">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="font-semibold">Sign In Failed</p>
+                <p className="font-semibold">Sign In Notice</p>
                 <p className="text-xs mt-0.5">{serverError}</p>
               </div>
             </div>
@@ -165,7 +140,7 @@ const LoginPage = () => {
                 htmlFor="email"
                 className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1.5"
               >
-                Email Address
+                Email Address <span className="text-status-error">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-content-secondary">
@@ -176,7 +151,7 @@ const LoginPage = () => {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  placeholder="name@company.com"
+                  placeholder="you@company.com"
                   value={formData.email}
                   onChange={handleChange}
                   disabled={isSubmitting}
@@ -188,7 +163,7 @@ const LoginPage = () => {
                 />
               </div>
               {clientErrors.email && (
-                <p className="text-xs text-status-error mt-1">{clientErrors.email}</p>
+                <p className="text-xs text-status-error mt-1.5">{clientErrors.email}</p>
               )}
             </div>
 
@@ -198,7 +173,7 @@ const LoginPage = () => {
                 htmlFor="password"
                 className="block text-xs font-semibold uppercase text-content-primary tracking-wider mb-1.5"
               >
-                Password
+                Password <span className="text-status-error">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-content-secondary">
@@ -233,18 +208,18 @@ const LoginPage = () => {
                 </button>
               </div>
               {clientErrors.password && (
-                <p className="text-xs text-status-error mt-1">
+                <p className="text-xs text-status-error mt-1.5">
                   {clientErrors.password}
                 </p>
               )}
             </div>
 
             {/* Submit Button */}
-            <div>
+            <div className="pt-1">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn-primary w-full !py-3 flex items-center justify-center gap-2"
+                className="btn-primary w-full !py-3 flex items-center justify-center gap-2 text-base font-semibold"
               >
                 {isSubmitting ? (
                   <>
@@ -259,43 +234,9 @@ const LoginPage = () => {
 
           </form>
 
-          {/* Quick Demo Credentials Assistant */}
-          <div className="mt-6 pt-5 border-t border-brandBorder">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-content-secondary uppercase tracking-wider mb-2.5">
-              <Info className="w-3.5 h-3.5 text-blue-500" />
-              <span>Academic Demo Helper</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => fillDemoCredentials('seeker')}
-                className="px-2 py-1.5 bg-blue-100/60 hover:bg-blue-100 text-blue-700 rounded border border-blue-200 font-medium transition-colors"
-              >
-                Job Seeker
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemoCredentials('employer')}
-                className="px-2 py-1.5 bg-blue-100/60 hover:bg-blue-100 text-blue-700 rounded border border-blue-200 font-medium transition-colors"
-              >
-                Employer
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemoCredentials('admin')}
-                className="px-2 py-1.5 bg-blue-100/60 hover:bg-blue-100 text-blue-700 rounded border border-blue-200 font-medium transition-colors"
-              >
-                Admin
-              </button>
-            </div>
-            <p className="text-[11px] text-content-secondary mt-2">
-              Click any button above to populate sample credentials into the form.
-            </p>
-          </div>
-
           {/* Switch to Register */}
-          <div className="mt-6 text-center text-xs text-content-secondary">
-            Don't have an account yet?{' '}
+          <div className="mt-6 pt-5 border-t border-brandBorder text-center text-xs text-content-secondary">
+            Don't have a SmartHire account yet?{' '}
             <Link
               to="/register"
               className="font-semibold text-blue-600 hover:text-blue-700 underline underline-offset-2"

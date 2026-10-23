@@ -4,11 +4,11 @@
  *
  * Key Architectural Features:
  *  - Uses credentials: 'include' on all requests to exchange HTTP-only JWT cookies.
- *  - Loads baseURL from VITE_API_URL environment variable.
- *  - Formats errors cleanly so components can display friendly user alerts.
+ *  - Handles both JSON payloads and multipart FormData (resumes).
+ *  - Formats errors cleanly for responsive user alerts.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 /**
  * Core HTTP Request Wrapper
@@ -20,11 +20,18 @@ async function request(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
 
   const defaultHeaders = {
-    'Accept': 'application/json',
+    Accept: 'application/json',
   };
 
-  // Automatically attach Content-Type for JSON payloads
-  if (options.body && typeof options.body === 'object') {
+  const storedToken = typeof localStorage !== 'undefined' ? localStorage.getItem('smarthire_token') : null;
+  if (storedToken) {
+    defaultHeaders['Authorization'] = `Bearer ${storedToken}`;
+  }
+
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
+  // Automatically attach Content-Type for JSON payloads (do not set for FormData)
+  if (options.body && !isFormData && typeof options.body === 'object') {
     defaultHeaders['Content-Type'] = 'application/json';
     options.body = JSON.stringify(options.body);
   }
@@ -55,7 +62,6 @@ async function request(endpoint, options = {}) {
 
     return data;
   } catch (error) {
-    // If it's a network error (e.g. server down / CORS failure)
     if (!error.status) {
       error.message =
         'Unable to connect to the SmartHire server. Please verify the backend is running at ' +
@@ -69,39 +75,38 @@ async function request(endpoint, options = {}) {
 // Authentication Service Endpoints
 // -------------------------------------------------------------
 export const authService = {
-  /**
-   * Register a new Job Seeker or Employer
-   */
-  register(userData) {
-    return request('/auth/register', {
+  async register(userData) {
+    const data = await request('/auth/register', {
       method: 'POST',
       body: userData,
     });
+    if (data && data.token && typeof localStorage !== 'undefined') {
+      localStorage.setItem('smarthire_token', data.token);
+    }
+    return data;
   },
 
-  /**
-   * Log into account and receive HTTP-only cookie
-   */
-  login(credentials) {
-    return request('/auth/login', {
+  async login(credentials) {
+    const data = await request('/auth/login', {
       method: 'POST',
       body: credentials,
     });
+    if (data && data.token && typeof localStorage !== 'undefined') {
+      localStorage.setItem('smarthire_token', data.token);
+    }
+    return data;
   },
 
-  /**
-   * Retrieve current user profile using active session cookie
-   */
   getMe() {
     return request('/auth/me', {
       method: 'GET',
     });
   },
 
-  /**
-   * Destroy session cookie on backend
-   */
-  logout() {
+  async logout() {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('smarthire_token');
+    }
     return request('/auth/logout', {
       method: 'POST',
     });
@@ -109,25 +114,149 @@ export const authService = {
 };
 
 // -------------------------------------------------------------
-// Admin Service Endpoints
+// Job Seeker Profile & Resume Service
 // -------------------------------------------------------------
-export const adminService = {
-  /**
-   * Get aggregate platform stats (user counts, DB status)
-   */
-  getStats() {
-    return request('/admin/stats', {
-      method: 'GET',
+export const profileService = {
+  getProfile() {
+    return request('/profiles/me', { method: 'GET' });
+  },
+
+  updateProfile(data) {
+    return request('/profiles/me', { method: 'PUT', body: data });
+  },
+
+  uploadResume(formData) {
+    return request('/profiles/resume', { method: 'POST', body: formData });
+  },
+
+  deleteResume() {
+    return request('/profiles/resume', { method: 'DELETE' });
+  },
+
+  getSeekerStats() {
+    return request('/profiles/dashboard-stats', { method: 'GET' });
+  },
+
+  getResumeDownloadUrl() {
+    return `${API_BASE_URL}/profiles/resume/download`;
+  },
+};
+
+// -------------------------------------------------------------
+// Company Service (Employer Profile)
+// -------------------------------------------------------------
+export const companyService = {
+  getMyCompany() {
+    return request('/companies/me', { method: 'GET' });
+  },
+
+  updateMyCompany(data) {
+    return request('/companies/me', { method: 'PUT', body: data });
+  },
+
+  getCompany(id) {
+    return request(`/companies/${id}`, { method: 'GET' });
+  },
+};
+
+// -------------------------------------------------------------
+// Job Listings Service
+// -------------------------------------------------------------
+export const jobService = {
+  getJobs(params = {}) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== '' && val !== 'all') {
+        query.append(key, val);
+      }
+    });
+    const queryString = query.toString();
+    return request(`/jobs${queryString ? `?${queryString}` : ''}`, { method: 'GET' });
+  },
+
+  getJob(id) {
+    return request(`/jobs/${id}`, { method: 'GET' });
+  },
+
+  getMyJobs() {
+    return request('/jobs/employer/my-jobs', { method: 'GET' });
+  },
+
+  createJob(jobData) {
+    return request('/jobs', { method: 'POST', body: jobData });
+  },
+
+  updateJob(id, jobData) {
+    return request(`/jobs/${id}`, { method: 'PUT', body: jobData });
+  },
+
+  updateJobStatus(id, status) {
+    return request(`/jobs/${id}/status`, { method: 'PATCH', body: { status } });
+  },
+};
+
+// -------------------------------------------------------------
+// Applications Service
+// -------------------------------------------------------------
+export const applicationService = {
+  apply(data) {
+    return request('/applications', { method: 'POST', body: data });
+  },
+
+  getMyApplications() {
+    return request('/applications/my-applications', { method: 'GET' });
+  },
+
+  withdraw(id) {
+    return request(`/applications/${id}/withdraw`, { method: 'PATCH' });
+  },
+
+  getJobApplicants(jobId) {
+    return request(`/applications/job/${jobId}`, { method: 'GET' });
+  },
+
+  updateStatus(id, status, notes = '') {
+    return request(`/applications/${id}/status`, {
+      method: 'PATCH',
+      body: { status, notes },
     });
   },
 
-  /**
-   * Get registered users list for administrative view
-   */
+  getEmployerStats() {
+    return request('/applications/employer/dashboard-stats', { method: 'GET' });
+  },
+
+  getApplicationResumeUrl(applicationId) {
+    return `${API_BASE_URL}/applications/${applicationId}/resume`;
+  },
+};
+
+// -------------------------------------------------------------
+// Admin Service Endpoints
+// -------------------------------------------------------------
+export const adminService = {
+  getStats() {
+    return request('/admin/stats', { method: 'GET' });
+  },
+
   getUsers() {
-    return request('/admin/users', {
-      method: 'GET',
-    });
+    return request('/admin/users', { method: 'GET' });
+  },
+
+  toggleUserStatus(id) {
+    return request(`/admin/users/${id}/status`, { method: 'PATCH' });
+  },
+
+  getJobs() {
+    return request('/admin/jobs', { method: 'GET' });
+  },
+
+  moderateJob(id, status) {
+    return request(`/admin/jobs/${id}/status`, { method: 'PATCH', body: { status } });
+  },
+
+  getApplications() {
+    return request('/admin/applications', { method: 'GET' });
   },
 };
 
@@ -135,18 +264,17 @@ export const adminService = {
 // System Health Service Endpoint
 // -------------------------------------------------------------
 export const healthService = {
-  /**
-   * Inspect backend and MongoDB connection status
-   */
   checkHealth() {
-    return request('/health', {
-      method: 'GET',
-    });
+    return request('/health', { method: 'GET' });
   },
 };
 
 export default {
   auth: authService,
+  profile: profileService,
+  company: companyService,
+  job: jobService,
+  application: applicationService,
   admin: adminService,
   health: healthService,
 };

@@ -14,6 +14,10 @@ dotenv.config();
 const { connectDB, getDBStatus } = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const profileRoutes = require('./routes/profileRoutes');
+const companyRoutes = require('./routes/companyRoutes');
+const jobRoutes = require('./routes/jobRoutes');
+const applicationRoutes = require('./routes/applicationRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -24,12 +28,23 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 // Core Middleware Configuration
 // -------------------------------------------------------------
 
-// 1. Cross-Origin Resource Sharing (CORS) configured for cookie exchange
+// 1. Cross-Origin Resource Sharing (CORS) configured for cookie and token exchange
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  CLIENT_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     credentials: true, // Crucial: allows browser to send and receive HTTP-only cookies
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
@@ -56,7 +71,7 @@ app.get('/api/health', (req, res) => {
   res.status(isHealthy ? 200 : 503).json({
     status: isHealthy ? 'healthy' : 'degraded',
     server: 'SmartHire API',
-    stage: 'Stage 1: Foundation Setup',
+    version: '1.0.0',
     timestamp: new Date().toISOString(),
     database: {
       status: dbStatus.state,
@@ -69,6 +84,10 @@ app.get('/api/health', (req, res) => {
 // API Routes
 // -------------------------------------------------------------
 app.use('/api/auth', authRoutes);
+app.use('/api/profiles', profileRoutes);
+app.use('/api/companies', companyRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes);
 app.use('/api/admin', adminRoutes);
 
 // -------------------------------------------------------------

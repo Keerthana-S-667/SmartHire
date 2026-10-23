@@ -1,7 +1,7 @@
 # SmartHire — Smart Job Portal with Resume Matching
-### Stage 1: Foundation Setup & Role-Based Access Control (RBAC)
+### Full-Stack Job Portal & Recruitment SaaS Platform
 
-SmartHire is a full-stack recruitment SaaS platform built using the **MERN** stack (MongoDB, Express.js, React.js, Node.js) with **Tailwind CSS**. Stage 1 establishes the rock-solid architectural foundation: secure user registration and login, HTTP-only cookie JWT authentication, role authorization, and protected dashboards for Job Seekers, Employers, and Administrators.
+SmartHire is a full-stack recruitment SaaS platform built using the **MERN** stack (MongoDB, Express.js, React.js, Node.js) with **Tailwind CSS**. It provides an end-to-end recruitment lifecycle: role-based access control (Job Seeker, Employer, Administrator), job authoring and lifecycle management, advanced public search with multi-facet filtering, candidate profile management with skills inventory, secure resume upload and storage, job application workflows with duplicate prevention, candidate pipeline review with status transitions, and real-time platform administration metrics.
 
 ---
 

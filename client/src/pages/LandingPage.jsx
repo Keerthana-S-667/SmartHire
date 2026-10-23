@@ -1,7 +1,7 @@
 /**
  * SmartHire Public Landing Page
- * Implements "Infographic and Strategic Light" design direction with exact blue palette.
- * Highlights planned resume matching capabilities, 3-step workflow, and audience benefits.
+ * User-centered recruitment marketplace homepage.
+ * Communicates core benefits for Job Seekers and Employers without developer technical jargon.
  */
 
 import React from 'react';
@@ -18,30 +18,31 @@ import {
   Shield,
   Layers,
   Search,
-  Cpu,
   Target,
   Clock,
   Compass,
+  Briefcase,
+  Users,
 } from 'lucide-react';
 
 const LandingPage = () => {
   const { user, getDashboardPath } = useAuth();
 
   return (
-    <div className="space-y-20 pb-16">
+    <div className="space-y-24 pb-20">
       
       {/* ------------------------------------------------------------- */}
       {/* HERO SECTION                                                  */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative pt-12 md:pt-20 overflow-hidden">
+      <section className="relative pt-10 sm:pt-16 md:pt-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             
             {/* Left Column: Headlines & Call to Actions */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100 border border-blue-200 text-blue-700 text-xs font-semibold tracking-wide">
                 <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-                <span>Next-Gen MERN Job Portal • Stage 1 Foundation</span>
+                <span>Skill-Based Career Matching</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-blue-700 tracking-tight leading-tight">
@@ -50,8 +51,8 @@ const LandingPage = () => {
               </h1>
 
               <p className="text-base sm:text-lg text-content-secondary max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                SmartHire bridges ambitious talent and forward-thinking employers through a modern,
-                transparent marketplace designed for intelligent, explainable skill matching and seamless career progression.
+                SmartHire connects ambitious professionals with forward-thinking employers through
+                intelligent skill alignment, transparent career insights, and modern recruitment tools.
               </p>
 
               {/* CTAs */}
@@ -70,88 +71,82 @@ const LandingPage = () => {
                       to="/register"
                       className="btn-primary w-full sm:w-auto text-base !py-3 !px-6 flex items-center justify-center gap-2"
                     >
-                      <span>Get Started Free</span>
+                      <span>Get Started</span>
                       <ArrowRight className="w-5 h-5" />
                     </Link>
-                    <a
-                      href="#how-it-works"
+                    <Link
+                      to="/jobs"
                       className="btn-secondary w-full sm:w-auto text-base !py-3 !px-6 flex items-center justify-center gap-2"
                     >
-                      <span>Explore How It Works</span>
-                    </a>
+                      <span>Explore Open Jobs</span>
+                    </Link>
                   </>
                 )}
               </div>
 
-              {/* Trust Indicators */}
+              {/* Customer Value Indicators */}
               <div className="pt-6 border-t border-brandBorder flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-content-secondary">
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-status-success" />
-                  <span>Secure JWT HTTP-Only Cookies</span>
+                  <span>Verified Employers</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-status-success" />
-                  <span>Granular Role-Based Access Control</span>
+                  <span>Skill-Based Compatibility</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-status-success" />
-                  <span>MongoDB Schemas with Bcrypt</span>
+                  <span>Private & Confidential</span>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Clean Infographic Visual (Candidate - Skill - Job Matrix) */}
+            {/* Right Column: High-Fidelity Matching Preview Card */}
             <div className="lg:col-span-5">
-              <div className="relative mx-auto max-w-md bg-white rounded-2xl border border-brandBorder shadow-card p-6 space-y-5">
+              <div className="relative mx-auto max-w-md bg-white rounded-2xl border border-brandBorder shadow-card p-6 space-y-4">
                 
-                {/* Header of infographic */}
-                <div className="flex items-center justify-between border-b border-brandBorder pb-4">
+                {/* Header */}
+                <div className="flex items-center justify-between border-b border-brandBorder pb-3">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
-                      <Cpu className="w-4 h-4" />
+                      <Target className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-content-primary">Intelligent Matching Matrix</p>
-                      <p className="text-[11px] text-content-secondary">Planned Stage 2 AI Capability</p>
+                      <p className="text-xs font-bold text-content-primary">Candidate Compatibility Insight</p>
+                      <p className="text-[11px] text-content-secondary">Skill Alignment Summary</p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-700">
-                    Preview
+                  <span className="text-[11px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
+                    94% Match
                   </span>
                 </div>
 
-                {/* Candidate Node */}
-                <div className="bg-surface-bg p-3.5 rounded-xl border border-blue-200/80 flex items-center justify-between">
+                {/* Candidate Profile Snippet */}
+                <div className="bg-surface-bg p-3.5 rounded-xl border border-brandBorder flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
-                      JS
+                    <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                      AM
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-content-primary">Software Engineer Profile</p>
-                      <p className="text-[11px] text-content-secondary">Resume & Experience Vector</p>
+                      <p className="text-xs font-bold text-content-primary">Alex Morgan</p>
+                      <p className="text-[11px] text-content-secondary">Senior Solutions Engineer</p>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">94% Fit</span>
+                  <span className="text-[11px] font-semibold text-status-success bg-status-success-bg px-2 py-0.5 rounded border border-status-success-border">
+                    Strong Fit
+                  </span>
                 </div>
 
-                {/* Connector Graphic */}
-                <div className="flex items-center justify-center py-1">
-                  <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-200 text-blue-700 text-[11px] font-medium">
-                    <Target className="w-3.5 h-3.5 text-blue-500" />
-                    <span>Semantic Skill Analysis</span>
-                  </div>
-                </div>
-
-                {/* Skills tags preview */}
-                <div className="bg-white p-3.5 rounded-xl border border-brandBorder space-y-2">
+                {/* Matched Competencies */}
+                <div className="space-y-2 pt-1">
                   <p className="text-[11px] font-semibold text-content-secondary uppercase tracking-wider">
-                    Extracted Competencies
+                    Core Competencies
                   </p>
                   <div className="flex flex-wrap gap-1.5">
-                    {['React.js', 'Node.js', 'MongoDB', 'REST APIs', 'Tailwind CSS'].map((skill) => (
+                    {['Cloud Architecture', 'Distributed Systems', 'API Integration', 'UI/UX Design', 'Technical Leadership'].map((skill) => (
                       <span
                         key={skill}
-                        className="text-xs px-2.5 py-1 rounded-md bg-blue-100/70 text-blue-700 font-medium border border-blue-200"
+                        className="text-xs px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 font-medium border border-blue-200"
                       >
                         ✓ {skill}
                       </span>
@@ -159,23 +154,26 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* Target Job Node */}
-                <div className="bg-surface-bg p-3.5 rounded-xl border border-blue-200/80 flex items-center justify-between">
+                {/* Target Role Snippet */}
+                <div className="bg-surface-bg p-3.5 rounded-xl border border-brandBorder flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-blue-700 text-white flex items-center justify-center">
+                    <div className="w-9 h-9 rounded-lg bg-blue-700 text-white flex items-center justify-center shadow-sm">
                       <Building2 className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-content-primary">Full-Stack MERN Developer</p>
-                      <p className="text-[11px] text-content-secondary">TechCorp Enterprise</p>
+                      <p className="text-xs font-semibold text-content-primary">Cloud Solutions Architect</p>
+                      <p className="text-[11px] text-content-secondary">Apex Global Technologies</p>
                     </div>
                   </div>
-                  <span className="text-xs text-status-success font-semibold">Matched</span>
+                  <span className="text-xs text-blue-600 font-semibold">Active Opening</span>
                 </div>
 
-                <div className="text-[11px] text-center text-content-secondary pt-1 italic">
-                  Deterministic & explainable recommendations coming in Stage 2.
+                {/* Status Indicator */}
+                <div className="p-2.5 rounded-lg bg-blue-50/70 border border-blue-100 flex items-center justify-between text-xs text-blue-800">
+                  <span className="font-medium">Application Status</span>
+                  <span className="font-semibold text-blue-600">Under Review • Interview Stage</span>
                 </div>
+
               </div>
             </div>
 
@@ -187,83 +185,69 @@ const LandingPage = () => {
       {/* FEATURES SECTION                                              */}
       {/* ------------------------------------------------------------- */}
       <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
-            <Compass className="w-3.5 h-3.5 text-blue-500" />
-            <span>Product Roadmap</span>
-          </div>
+        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+          <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
+            Platform Capabilities
+          </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-blue-700">
-            Intelligent Platform Capabilities
+            Intelligent Tools for Candidates & Employers
           </h2>
           <p className="text-content-secondary text-base leading-relaxed">
-            SmartHire is structured to evolve into an AI-augmented talent ecosystem.
-            The foundation in Stage 1 lays the bedrock for these upcoming core innovations:
+            SmartHire is purpose-built to eliminate recruitment friction with transparent skill evaluation and reliable workflow management.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
           {/* Feature 1 */}
-          <div className="card-container hover:shadow-card transition-shadow space-y-4 relative group">
-            <div className="flex items-center justify-between">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                <FileCheck className="w-6 h-6" />
-              </div>
-              <span className="badge-roadmap">Stage 2</span>
+          <div className="card-container hover:shadow-card transition-shadow space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+              <Compass className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold text-blue-600">
-              Resume-Based Matching
+              Personalized Job Discovery
             </h3>
             <p className="text-sm text-content-secondary leading-relaxed">
-              Automated document parsing extracts key technical competencies, education, and career milestones to match candidate profiles with precision.
+              Find positions that align with your background and goals, cutting through irrelevant listings to discover opportunities that truly match.
             </p>
           </div>
 
           {/* Feature 2 */}
-          <div className="card-container hover:shadow-card transition-shadow space-y-4 relative group">
-            <div className="flex items-center justify-between">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <span className="badge-roadmap">Stage 2</span>
+          <div className="card-container hover:shadow-card transition-shadow space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+              <Sparkles className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold text-blue-600">
-              Personalized Recommendations
+              Skill Compatibility Insights
             </h3>
             <p className="text-sm text-content-secondary leading-relaxed">
-              Tailored job opportunity feeds continuously align candidate aspirations with real-time employer demand, filtering out irrelevant noise.
+              Understand how your experience stacks up against job requirements with clear, explainable feedback on matching criteria.
             </p>
           </div>
 
           {/* Feature 3 */}
-          <div className="card-container hover:shadow-card transition-shadow space-y-4 relative group">
-            <div className="flex items-center justify-between">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                <BarChart3 className="w-6 h-6" />
-              </div>
-              <span className="badge-roadmap">Stage 2</span>
+          <div className="card-container hover:shadow-card transition-shadow space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+              <FileCheck className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold text-blue-600">
-              Explainable Compatibility
+              Resume & Profile Management
             </h3>
             <p className="text-sm text-content-secondary leading-relaxed">
-              No black-box algorithms. Candidates and recruiters receive transparent score breakdowns highlighting strengths and skill gap suggestions.
+              Maintain a comprehensive professional profile with your verified credentials, past roles, and core capabilities in one secure place.
             </p>
           </div>
 
           {/* Feature 4 */}
-          <div className="card-container hover:shadow-card transition-shadow space-y-4 relative group">
-            <div className="flex items-center justify-between">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                <Clock className="w-6 h-6" />
-              </div>
-              <span className="badge-roadmap">Stage 2</span>
+          <div className="card-container hover:shadow-card transition-shadow space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+              <Clock className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold text-blue-600">
-              Application Tracking
+              Application Progress Tracking
             </h3>
             <p className="text-sm text-content-secondary leading-relaxed">
-              Live status pipelines keep applicants informed through submission, review, interview scheduling, and offer decision stages.
+              Stay informed through every stage of your candidacy, from initial submission to interview scheduling and offer decisions.
             </p>
           </div>
 
@@ -277,48 +261,48 @@ const LandingPage = () => {
         <div className="bg-white rounded-2xl border border-brandBorder shadow-subtle p-8 sm:p-12">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
             <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
-              Simple 3-Step Process
+              Simple 3-Step Workflow
             </span>
             <h2 className="text-3xl font-bold text-blue-700">
-              How SmartHire Operates
+              How SmartHire Works
             </h2>
             <p className="text-sm sm:text-base text-content-secondary">
-              A streamlined, modern experience built for speed, transparency, and high placement fidelity.
+              A streamlined recruitment process designed to save time and deliver quality matches.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
             {/* Step 1 */}
-            <div className="flex flex-col items-center text-center space-y-4 p-4">
+            <div className="flex flex-col items-center text-center space-y-3 p-4">
               <div className="w-14 h-14 rounded-2xl bg-blue-500 text-white flex items-center justify-center text-xl font-bold shadow-md">
                 1
               </div>
               <h3 className="text-lg font-bold text-blue-600">Create Your Profile</h3>
               <p className="text-sm text-content-secondary leading-relaxed">
-                Register securely as a Job Seeker or Employer. Our role-based portal instantly establishes your dedicated dashboard.
+                Sign up as a Job Seeker or Employer to set up your dedicated workspace and highlight key requirements.
               </p>
             </div>
 
             {/* Step 2 */}
-            <div className="flex flex-col items-center text-center space-y-4 p-4">
+            <div className="flex flex-col items-center text-center space-y-3 p-4">
               <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl font-bold shadow-md">
                 2
               </div>
               <h3 className="text-lg font-bold text-blue-600">Discover Opportunities</h3>
               <p className="text-sm text-content-secondary leading-relaxed">
-                Explore curated job roles or applicant pipelines mapped directly against technical skill requirements and job descriptions.
+                Explore curated job roles or candidate pools mapped directly against specific skills and experience levels.
               </p>
             </div>
 
             {/* Step 3 */}
-            <div className="flex flex-col items-center text-center space-y-4 p-4">
+            <div className="flex flex-col items-center text-center space-y-3 p-4">
               <div className="w-14 h-14 rounded-2xl bg-blue-700 text-white flex items-center justify-center text-xl font-bold shadow-md">
                 3
               </div>
               <h3 className="text-lg font-bold text-blue-600">Apply and Track</h3>
               <p className="text-sm text-content-secondary leading-relaxed">
-                Submit applications with a single click, monitor recruitment stages in real time, and receive direct recruiter feedback.
+                Submit applications, monitor progress in real time, and coordinate interviews smoothly through your dashboard.
               </p>
             </div>
 
@@ -327,90 +311,93 @@ const LandingPage = () => {
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* AUDIENCE SECTION                                              */}
+      {/* AUDIENCE SECTION: FOR JOB SEEKERS & EMPLOYERS                */}
       {/* ------------------------------------------------------------- */}
-      <section id="audience" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+          <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
+            Tailored Experiences
+          </span>
           <h2 className="text-3xl font-bold text-blue-700">
-            Tailored Experiences for Both Sides of Hiring
+            Designed for Both Sides of Hiring
           </h2>
           <p className="text-content-secondary text-base">
-            SmartHire delivers customized workspaces tailored to individual career seekers and hiring managers.
+            Whether advancing your career or scaling your team, SmartHire provides the tools you need.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           
-          {/* Job Seeker Benefits */}
-          <div className="card-container border-t-4 border-t-blue-500 space-y-6">
+          {/* For Job Seekers */}
+          <div id="for-seekers" className="card-container border-t-4 border-t-blue-500 space-y-6 scroll-mt-24">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
                 <UserCheck className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-blue-700">For Job Seekers</h3>
-                <p className="text-xs text-content-secondary">Accelerate your career trajectory</p>
+                <p className="text-xs text-content-secondary">Accelerate your professional trajectory</p>
               </div>
             </div>
 
             <ul className="space-y-3 text-sm text-content-secondary">
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                <span>Dedicated personal dashboard with profile progress tracking.</span>
+                <span>Personalized workspace with profile and application tracking.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                <span>Future AI resume analyzer that surfaces optimal job matches.</span>
+                <span>Skill compatibility insights to identify your best-matched positions.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                <span>Full visibility into required skills and candidate compatibility scores.</span>
+                <span>Clear visibility into required qualifications and employer criteria.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                <span>Zero spam: Direct connections with vetted, authenticated employers.</span>
+                <span>Direct access to verified opportunities from active hiring teams.</span>
               </li>
             </ul>
 
             <div className="pt-2">
               <Link
                 to="/register"
-                className="btn-outline w-full text-center flex items-center justify-center gap-2"
+                className="btn-primary w-full text-center flex items-center justify-center gap-2"
               >
-                <span>Register as Job Seeker</span>
+                <span>Find Opportunities</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
 
-          {/* Employer Benefits */}
-          <div className="card-container border-t-4 border-t-blue-600 space-y-6">
+          {/* For Employers */}
+          <div id="for-employers" className="card-container border-t-4 border-t-blue-600 space-y-6 scroll-mt-24">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
                 <Building2 className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-blue-700">For Employers</h3>
-                <p className="text-xs text-content-secondary">Source and hire vetted candidates faster</p>
+                <p className="text-xs text-content-secondary">Discover and hire qualified candidates faster</p>
               </div>
             </div>
 
             <ul className="space-y-3 text-sm text-content-secondary">
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                <span>Centralized hiring dashboard to supervise active openings and applicant counts.</span>
+                <span>Dedicated employer management portal for job openings and applicants.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                <span>Candidate matching engine that ranks applicants by verified skills.</span>
+                <span>Skill-based candidate screening to surface relevant talent quickly.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                <span>Streamlined candidate filtering reducing time-to-interview significantly.</span>
+                <span>Structured pipelines to manage applicants from review to hiring decision.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                <span>Secure corporate credentials protected by HTTP-only cookie authentication.</span>
+                <span>Secure account management protecting company postings and candidate data.</span>
               </li>
             </ul>
 
@@ -419,7 +406,7 @@ const LandingPage = () => {
                 to="/register"
                 className="btn-outline w-full text-center flex items-center justify-center gap-2"
               >
-                <span>Register as Employer</span>
+                <span>Hire Talent</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -435,10 +422,10 @@ const LandingPage = () => {
         <div className="bg-gradient-to-r from-blue-700 to-blue-800 rounded-3xl p-8 sm:p-12 text-white shadow-card flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-2 text-center md:text-left">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Ready to Experience Smart Hiring?
+              Ready to Discover Your Next Opportunity?
             </h2>
             <p className="text-blue-200 text-sm sm:text-base max-w-xl">
-              Create your account today and explore the foundation of next-generation recruitment.
+              Create your SmartHire account today and explore intelligent career matching.
             </p>
           </div>
 
@@ -447,7 +434,7 @@ const LandingPage = () => {
               to="/register"
               className="px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-400 font-semibold text-white text-center transition-colors shadow-sm"
             >
-              Sign Up Now
+              Get Started
             </Link>
             <Link
               to="/login"

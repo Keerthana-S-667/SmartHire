@@ -1,17 +1,17 @@
 /**
  * User Model
- * Defines schema, validation, and security rules for SmartHire users.
+ * Defines schema, validation, indexes, and security rules for SmartHire users.
  * Roles supported:
- *  - 'job_seeker': Looking for jobs, resumes & matching (Stage 2)
- *  - 'employer': Posting jobs & evaluating talent (Stage 2)
- *  - 'admin': Platform monitoring & administration
+ *  - 'job_seeker' (also accepts 'jobseeker')
+ *  - 'employer'
+ *  - 'admin'
  */
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 // Allowed roles enumeration
-const ALLOWED_ROLES = ['job_seeker', 'employer', 'admin'];
+const ALLOWED_ROLES = ['job_seeker', 'jobseeker', 'employer', 'admin'];
 
 const userSchema = new mongoose.Schema(
   {
@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true, // Normalizes email to lowercase
+      index: true,
       match: [
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         'Please provide a valid email address format',
@@ -47,15 +48,27 @@ const userSchema = new mongoose.Schema(
       },
       default: 'job_seeker',
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true, // Automatically provides createdAt and updatedAt
   }
 );
 
+// Pre-save normalization: standardize 'jobseeker' to 'job_seeker'
+userSchema.pre('save', function (next) {
+  if (this.role === 'jobseeker') {
+    this.role = 'job_seeker';
+  }
+  next();
+});
+
 /**
  * Mongoose toJSON transform:
- * Ensures the passwordHash is NEVER exposed in API responses or serialized JSON.
+ * Ensures the passwordHash and __v are NEVER exposed in API responses or serialized JSON.
  */
 userSchema.set('toJSON', {
   transform: function (doc, ret) {

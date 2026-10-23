@@ -16,6 +16,14 @@ dist-ssr/
 build/
 *.local
 
+# Uploaded files
+uploads/
+server/uploads/*
+!server/uploads/.gitkeep
+!server/uploads/resumes/
+server/uploads/resumes/*
+!server/uploads/resumes/.gitkeep
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

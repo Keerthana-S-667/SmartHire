@@ -1,7 +1,7 @@
 /**
  * Shared Dashboard Layout Component
- * Provides a unified, professional dashboard shell with responsive navigation,
- * role badges, user account preview, and quick session termination.
+ * Unified, professional dashboard shell with responsive sidebar navigation,
+ * clear user account preview, and intuitive session controls.
  */
 
 import React, { useState } from 'react';
@@ -19,7 +19,6 @@ import {
   Menu,
   X,
   Sparkles,
-  ExternalLink,
 } from 'lucide-react';
 
 const DashboardLayout = ({ title, subtitle, children }) => {
@@ -33,7 +32,7 @@ const DashboardLayout = ({ title, subtitle, children }) => {
     navigate('/');
   };
 
-  // Determine navigation items based on authenticated role
+  // Navigation items based on authenticated role
   const getNavItems = () => {
     if (!user) return [];
 
@@ -47,62 +46,58 @@ const DashboardLayout = ({ title, subtitle, children }) => {
             active: location.pathname === '/job-seeker/dashboard',
           },
           {
-            label: 'Resume Matching',
-            href: '#resume-match',
-            icon: Sparkles,
-            badge: 'Stage 2',
-            disabled: true,
+            label: 'Find Jobs',
+            href: '/jobs',
+            icon: Briefcase,
+            active: location.pathname === '/jobs',
           },
           {
             label: 'My Applications',
-            href: '#applications',
+            href: '/job-seeker/applications',
             icon: FileText,
-            badge: 'Stage 2',
-            disabled: true,
+            active: location.pathname === '/job-seeker/applications',
+          },
+          {
+            label: 'Profile & Resume',
+            href: '/job-seeker/profile',
+            icon: User,
+            active: location.pathname === '/job-seeker/profile',
           },
         ];
       case 'employer':
         return [
           {
-            label: 'Dashboard Overview',
+            label: 'Overview',
             href: '/employer/dashboard',
             icon: LayoutDashboard,
             active: location.pathname === '/employer/dashboard',
           },
           {
             label: 'Job Postings',
-            href: '#postings',
+            href: '/employer/jobs',
             icon: Building,
-            badge: 'Stage 2',
-            disabled: true,
+            active: location.pathname === '/employer/jobs',
           },
           {
-            label: 'Candidate Pool',
-            href: '#candidates',
-            icon: Users,
-            badge: 'Stage 2',
-            disabled: true,
+            label: 'Post a New Job',
+            href: '/employer/jobs/new',
+            icon: Sparkles,
+            active: location.pathname === '/employer/jobs/new',
+          },
+          {
+            label: 'Company Profile',
+            href: '/employer/company',
+            icon: Briefcase,
+            active: location.pathname === '/employer/company',
           },
         ];
       case 'admin':
         return [
           {
-            label: 'Platform Overview',
+            label: 'Overview & Moderation',
             href: '/admin/dashboard',
             icon: LayoutDashboard,
             active: location.pathname === '/admin/dashboard',
-          },
-          {
-            label: 'User Directory',
-            href: '#users-list',
-            icon: Users,
-            active: false,
-          },
-          {
-            label: 'System Status',
-            href: '#system-health',
-            icon: Activity,
-            active: false,
           },
         ];
       default:
@@ -117,11 +112,11 @@ const DashboardLayout = ({ title, subtitle, children }) => {
       case 'admin':
         return 'Administrator';
       case 'employer':
-        return 'Employer Portal';
+        return 'Employer';
       case 'job_seeker':
-        return 'Job Seeker Portal';
+        return 'Job Seeker';
       default:
-        return 'Portal';
+        return 'Member';
     }
   };
 
@@ -139,166 +134,160 @@ const DashboardLayout = ({ title, subtitle, children }) => {
                   <Briefcase className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-lg font-bold text-blue-700 leading-tight">
+                  <span className="text-lg font-bold text-blue-700 tracking-tight leading-tight">
                     Smart<span className="text-blue-500">Hire</span>
                   </span>
-                  <span className="text-[10px] text-content-secondary font-medium tracking-wide">
-                    {getRoleLabel(user?.role)}
+                  <span className="text-[10px] text-content-secondary font-medium uppercase tracking-wider -mt-0.5">
+                    Workspace
                   </span>
                 </div>
               </Link>
+
+              <span className="hidden sm:inline-flex items-center text-xs px-2.5 py-1 rounded-md bg-blue-100/70 border border-blue-200 text-blue-700 font-semibold">
+                {getRoleLabel(user?.role)}
+              </span>
             </div>
 
-            {/* Desktop Navigation Links */}
-            <nav className="hidden md:flex items-center gap-1">
-              {navItems.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={idx}
-                    to={item.href}
-                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      item.active
-                        ? 'bg-blue-100 text-blue-700 font-semibold'
-                        : 'text-content-secondary hover:text-content-primary hover:bg-surface-bg'
-                    } ${item.disabled ? 'cursor-default opacity-75' : ''}`}
-                  >
-                    <Icon className="w-4 h-4 text-blue-500" />
-                    <span>{item.label}</span>
-                    {item.badge && (
-                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200">
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Right: User Profile & Logout */}
-            <div className="hidden sm:flex items-center gap-3">
-              <div className="flex items-center gap-2 px-3 py-1 bg-surface-bg rounded-lg border border-brandBorder">
+            {/* Right: User Profile & Quick Actions */}
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-surface-bg border border-brandBorder">
                 <div className="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                  {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
-                <div className="text-left">
-                  <p className="text-xs font-semibold text-content-primary leading-tight">
-                    {user?.name}
-                  </p>
-                  <p className="text-[10px] text-content-secondary capitalize">
-                    {user?.role?.replace('_', ' ')}
-                  </p>
+                <div className="text-left text-xs">
+                  <p className="font-bold text-content-primary leading-tight">{user?.name}</p>
+                  <p className="text-[11px] text-content-secondary truncate max-w-[160px]">{user?.email}</p>
                 </div>
               </div>
 
-              <Link
-                to="/"
-                title="View Public Site"
-                className="p-2 text-content-secondary hover:text-blue-600 hover:bg-blue-100/50 rounded-lg transition-colors"
-              >
-                <ExternalLink className="w-4 h-4" />
-              </Link>
-
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-status-error hover:bg-status-error-bg border border-transparent hover:border-status-error-border rounded-lg transition-colors"
-                title="Log out of session"
+                title="Sign out of account"
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-content-secondary hover:text-status-error hover:bg-status-error-bg rounded-lg border border-brandBorder hover:border-status-error-border transition-colors"
               >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Logout</span>
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Sign Out</span>
               </button>
-            </div>
 
-            {/* Mobile Menu Toggle */}
-            <div className="sm:hidden flex items-center">
+              {/* Mobile Sidebar Toggle Button */}
               <button
                 onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-                className="p-2 text-content-secondary hover:text-content-primary rounded-lg"
+                className="p-2 rounded-lg text-content-secondary hover:text-content-primary md:hidden"
+                aria-label="Toggle navigation drawer"
               >
-                {mobileSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
             </div>
 
           </div>
         </div>
+      </header>
+
+      {/* Main Container with Sidebar + Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1 flex flex-col md:flex-row gap-8">
+        
+        {/* Desktop Sidebar Navigation */}
+        <aside className="hidden md:block w-64 shrink-0 space-y-6">
+          <nav className="card-container p-3 space-y-1">
+            <div className="px-3 py-2 text-[11px] font-bold text-content-secondary uppercase tracking-wider">
+              Navigation
+            </div>
+            {navItems.map((item, idx) => {
+              const Icon = item.icon;
+              return item.disabled ? (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-content-secondary/60 cursor-not-allowed select-none"
+                  title="Coming soon in upcoming updates"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-4 h-4 text-content-secondary/40" />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-surface-bg border border-brandBorder text-content-secondary">
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  key={idx}
+                  to={item.href}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    item.active
+                      ? 'bg-blue-100 text-blue-700 font-semibold'
+                      : 'text-content-primary hover:bg-surface-bg hover:text-blue-600'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 ${item.active ? 'text-blue-600' : 'text-content-secondary'}`} />
+                    <span>{item.label}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Help & Support Card */}
+          <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 space-y-2">
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-600">Need Help?</p>
+            <p className="text-xs text-blue-800 leading-relaxed">
+              Explore job discovery and skill matching tools in your SmartHire portal.
+            </p>
+          </div>
+        </aside>
 
         {/* Mobile Navigation Drawer */}
         {mobileSidebarOpen && (
-          <div className="sm:hidden border-t border-brandBorder bg-white p-4 space-y-3">
-            <div className="p-3 bg-surface-bg rounded-lg border border-brandBorder mb-3">
-              <p className="text-sm font-semibold text-content-primary">{user?.name}</p>
-              <p className="text-xs text-content-secondary">{user?.email}</p>
-              <span className="inline-block mt-1 text-[11px] font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
-                {user?.role?.toUpperCase()}
-              </span>
-            </div>
-
-            <nav className="flex flex-col space-y-1">
+          <div className="md:hidden card-container p-4 space-y-3 mb-4">
+            <p className="text-xs font-bold text-content-secondary uppercase tracking-wider">
+              Navigation
+            </p>
+            <div className="space-y-1">
               {navItems.map((item, idx) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={idx}
-                    to={item.href}
+                    to={item.disabled ? '#' : item.href}
                     onClick={() => setMobileSidebarOpen(false)}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium ${
-                      item.active ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-content-secondary'
-                    }`}
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium ${
+                      item.active ? 'bg-blue-100 text-blue-700' : 'text-content-primary hover:bg-surface-bg'
+                    } ${item.disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
                   >
-                    <div className="flex items-center gap-2">
-                      <Icon className="w-4 h-4 text-blue-500" />
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-4 h-4" />
                       <span>{item.label}</span>
                     </div>
                     {item.badge && (
-                      <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-200">
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-surface-bg border border-brandBorder text-content-secondary">
                         {item.badge}
                       </span>
                     )}
                   </Link>
                 );
               })}
-            </nav>
-
-            <div className="pt-3 border-t border-brandBorder flex gap-2">
-              <Link
-                to="/"
-                onClick={() => setMobileSidebarOpen(false)}
-                className="btn-outline flex-1 text-center text-xs !py-2"
-              >
-                Public Site
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="flex-1 text-center text-xs py-2 px-3 text-status-error bg-status-error-bg rounded-lg border border-status-error-border"
-              >
-                Sign Out
-              </button>
             </div>
           </div>
         )}
-      </header>
 
-      {/* Main Content Wrapper */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
-        {(title || subtitle) && (
-          <div className="mb-8">
-            {title && (
-              <h1 className="text-2xl sm:text-3xl font-bold text-blue-700 tracking-tight">
-                {title}
-              </h1>
-            )}
-            {subtitle && (
-              <p className="text-sm sm:text-base text-content-secondary mt-1">
-                {subtitle}
-              </p>
-            )}
-          </div>
-        )}
+        {/* Main Content Area */}
+        <main className="flex-1 space-y-6 min-w-0">
+          
+          {/* Page Title & Context Header */}
+          {(title || subtitle) && (
+            <div className="space-y-1 pb-2 border-b border-brandBorder">
+              {title && <h1 className="text-2xl font-bold text-blue-700">{title}</h1>}
+              {subtitle && <p className="text-sm text-content-secondary">{subtitle}</p>}
+            </div>
+          )}
 
-        {/* Dashboard Child View */}
-        {children}
-      </main>
+          {/* Children Components */}
+          {children}
+        </main>
+
+      </div>
     </div>
   );
 };

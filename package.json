@@ -1,0 +1,15 @@
+{
+  "name": "smarthire-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SmartHire Full-Stack SaaS Recruitment Platform",
+  "scripts": {
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "start:all": "powershell -ExecutionPolicy Bypass -File ./start-all.ps1",
+    "start:server": "npm run start --prefix server",
+    "build:client": "npm run build --prefix client",
+    "seed:admin": "npm run seed:admin --prefix server",
+    "seed:jobs": "npm run seed:jobs --prefix server"
+  }
+}

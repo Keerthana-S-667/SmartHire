@@ -50,7 +50,9 @@ const register = async (req, res, next) => {
     }
 
     // 2. Validation: Role restriction (Admin accounts can NEVER be created via public registration)
-    const normalizedRole = role.toLowerCase().trim();
+    let normalizedRole = role.toLowerCase().trim().replace('-', '_');
+    if (normalizedRole === 'jobseeker') normalizedRole = 'job_seeker';
+
     if (normalizedRole === 'admin') {
       return res.status(403).json({
         success: false,
@@ -110,6 +112,7 @@ const register = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       message: 'Account registered successfully! Welcome to SmartHire.',
+      token,
       user: newUser.toJSON(),
     });
   } catch (error) {
@@ -162,6 +165,7 @@ const login = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: 'Logged in successfully! Welcome back.',
+      token,
       user: user.toJSON(),
     });
   } catch (error) {

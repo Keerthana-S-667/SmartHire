@@ -1,13 +1,13 @@
 /**
  * SmartHire Navigation Bar
- * Responsive header with branding, anchor navigation for landing page,
- * authentication buttons, and dynamic state for logged-in users.
+ * Responsive, clean header with branding, intuitive navigation,
+ * and dynamic state for authenticated users.
  */
 
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Briefcase, Menu, X, User, LogOut, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Briefcase, Menu, X, User, LogOut, ArrowRight } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout, getDashboardPath } = useAuth();
@@ -22,8 +22,7 @@ const Navbar = () => {
   };
 
   /**
-   * Helper to scroll smoothly to landing page sections if on home page,
-   * or navigate home first if on another page.
+   * Smoothly scrolls to section on home page or navigates there from other pages.
    */
   const handleNavClick = (sectionId) => {
     setMobileMenuOpen(false);
@@ -46,7 +45,7 @@ const Navbar = () => {
       case 'job_seeker':
         return 'Job Seeker';
       default:
-        return 'User';
+        return 'Member';
     }
   };
 
@@ -65,18 +64,32 @@ const Navbar = () => {
                 Smart<span className="text-blue-500">Hire</span>
               </span>
               <span className="text-[10px] text-content-secondary font-medium tracking-wider uppercase -mt-1">
-                Smart Job Portal
+                Job Portal
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-7">
             <Link
               to="/"
-              className="text-sm font-medium text-content-primary hover:text-blue-600 transition-colors"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/' && !location.hash
+                  ? 'text-blue-600 font-semibold'
+                  : 'text-content-primary hover:text-blue-600'
+              }`}
             >
               Home
+            </Link>
+            <Link
+              to="/jobs"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname.startsWith('/jobs')
+                  ? 'text-blue-600 font-semibold'
+                  : 'text-content-primary hover:text-blue-600'
+              }`}
+            >
+              Find Jobs
             </Link>
             <button
               onClick={() => handleNavClick('features')}
@@ -91,10 +104,16 @@ const Navbar = () => {
               How It Works
             </button>
             <button
-              onClick={() => handleNavClick('about')}
+              onClick={() => handleNavClick('for-seekers')}
               className="text-sm font-medium text-content-secondary hover:text-blue-600 transition-colors"
             >
-              About
+              For Candidates
+            </button>
+            <button
+              onClick={() => handleNavClick('for-employers')}
+              className="text-sm font-medium text-content-secondary hover:text-blue-600 transition-colors"
+            >
+              For Employers
             </button>
           </nav>
 
@@ -104,11 +123,11 @@ const Navbar = () => {
               <div className="flex items-center gap-3">
                 <Link
                   to={getDashboardPath(user.role)}
-                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-blue-100/70 border border-blue-200 text-blue-700 text-sm font-medium hover:bg-blue-100 transition-colors"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-100/70 border border-blue-200 text-blue-700 text-sm font-medium hover:bg-blue-100 transition-colors"
                 >
                   <User className="w-4 h-4 text-blue-600" />
                   <span>{user.name}</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-blue-600 text-white font-semibold uppercase">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-blue-600 text-white font-semibold">
                     {getRoleBadge(user.role)}
                   </span>
                 </Link>
@@ -122,19 +141,19 @@ const Navbar = () => {
 
                 <button
                   onClick={handleLogout}
-                  title="Sign out"
+                  title="Sign Out"
                   className="p-2 text-content-secondary hover:text-status-error hover:bg-status-error-bg rounded-lg border border-transparent hover:border-status-error-border transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <Link
                   to="/login"
                   className="px-4 py-2 text-sm font-medium text-content-primary hover:text-blue-600 rounded-lg hover:bg-blue-100/50 transition-colors"
                 >
-                  Log In
+                  Sign In
                 </Link>
                 <Link
                   to="/register"
@@ -151,8 +170,8 @@ const Navbar = () => {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-content-secondary hover:text-content-primary hover:bg-blue-100/60 focus:outline-none"
-              aria-label="Toggle Navigation Menu"
+              className="p-2 rounded-lg text-content-secondary hover:text-content-primary hover:bg-blue-100/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? (
                 <X className="w-6 h-6 text-content-primary" />
@@ -168,13 +187,20 @@ const Navbar = () => {
       {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-brandBorder bg-white px-4 pt-3 pb-6 shadow-card space-y-3">
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-1">
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-md text-base font-medium text-content-primary hover:bg-blue-100/50 hover:text-blue-600"
             >
               Home
+            </Link>
+            <Link
+              to="/jobs"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded-md text-base font-medium text-content-primary hover:bg-blue-100/50 hover:text-blue-600"
+            >
+              Find Jobs
             </Link>
             <button
               onClick={() => handleNavClick('features')}
@@ -189,10 +215,16 @@ const Navbar = () => {
               How It Works
             </button>
             <button
-              onClick={() => handleNavClick('about')}
+              onClick={() => handleNavClick('for-seekers')}
               className="text-left px-3 py-2 rounded-md text-base font-medium text-content-secondary hover:bg-blue-100/50 hover:text-blue-600"
             >
-              About
+              For Candidates
+            </button>
+            <button
+              onClick={() => handleNavClick('for-employers')}
+              className="text-left px-3 py-2 rounded-md text-base font-medium text-content-secondary hover:bg-blue-100/50 hover:text-blue-600"
+            >
+              For Employers
             </button>
           </div>
 
@@ -202,7 +234,7 @@ const Navbar = () => {
                 <div className="px-3 py-2 bg-blue-100/60 rounded-lg">
                   <p className="text-sm font-semibold text-content-primary">{user.name}</p>
                   <p className="text-xs text-content-secondary">{user.email}</p>
-                  <span className="inline-block mt-1 text-[11px] font-medium text-blue-700 bg-blue-200 px-2 py-0.5 rounded">
+                  <span className="inline-block mt-1 text-[11px] font-semibold text-blue-700 bg-blue-200 px-2 py-0.5 rounded">
                     {getRoleBadge(user.role)}
                   </span>
                 </div>
@@ -228,7 +260,7 @@ const Navbar = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full btn-outline text-center block"
                 >
-                  Log In
+                  Sign In
                 </Link>
                 <Link
                   to="/register"

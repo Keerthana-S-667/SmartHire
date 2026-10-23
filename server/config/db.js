@@ -1,29 +1,65 @@
 /**
  * Database Configuration
- * Manages Mongoose connection to MongoDB with detailed error diagnostics.
- * Beginners Note: Mongoose is an ODM (Object Data Modeling) library for MongoDB
- * that makes it easy to define schemas, validate data, and run queries.
+ * Manages Mongoose connection to MongoDB with detailed lifecycle diagnostics,
+ * connection pooling, reconnection handling, and status inspection.
  */
 
 const mongoose = require('mongoose');
 
 let isConnected = false;
+let listenersAttached = false;
 
 /**
- * Connect to MongoDB using the connection string from environment variables.
- * If connection fails, logs clear instructions without crashing the Express server.
+ * Attach Mongoose connection event listeners once.
+ */
+const attachListeners = () => {
+  if (listenersAttached) return;
+
+  mongoose.connection.on('connected', () => {
+    isConnected = true;
+    console.log(`[MongoDB] Connection established with database: ${mongoose.connection.name}`);
+  });
+
+  mongoose.connection.on('error', (err) => {
+    console.error(`[MongoDB] Connection runtime error: ${err.message}`);
+  });
+
+  mongoose.connection.on('disconnected', () => {
+    isConnected = false;
+    console.warn('[MongoDB] Connection disconnected. Mongoose will attempt to reconnect...');
+  });
+
+  mongoose.connection.on('reconnected', () => {
+    isConnected = true;
+    console.log('[MongoDB] Connection re-established successfully.');
+  });
+
+  listenersAttached = true;
+};
+
+/**
+ * Connect to MongoDB using the URI from environment variables.
+ * Safe against duplicate connections and handles errors without crashing Express.
  */
 const connectDB = async () => {
+  // If already connected, avoid re-initiating connection
+  if (mongoose.connection.readyState === 1) {
+    isConnected = true;
+    return mongoose.connection;
+  }
+
+  attachListeners();
+
   const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/smarthire';
 
   try {
-    // Attempt database connection with a 5-second server selection timeout
     const conn = await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
     });
 
     isConnected = true;
     console.log(`[MongoDB] Successfully connected to database: ${conn.connection.name} at ${conn.connection.host}`);
+    return conn;
   } catch (error) {
     isConnected = false;
     console.error('\n============================================================');
@@ -31,9 +67,8 @@ const connectDB = async () => {
     console.error(`Target URI: ${uri}`);
     console.error(`Reason: ${error.message}`);
     console.error('Troubleshooting Tips:');
-    console.error(' 1. Verify that MongoDB Community Server is installed.');
-    console.error(' 2. Run "net start MongoDB" or "mongod" in a separate terminal.');
-    console.error(' 3. Or configure a remote MongoDB Atlas URI in server/.env.');
+    console.error(' 1. Verify that MongoDB Community Server is installed & running.');
+    console.error(' 2. Verify port 27017 is active (e.g. net start MongoDB).');
     console.error('============================================================\n');
   }
 };
